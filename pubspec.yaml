@@ -16,6 +16,7 @@ dependencies:
   shared_preferences: ^2.3.1
   carousel_slider: ^5.1.1
   http: ^1.2.2
+  video_player: ^2.10.0
 
 dev_dependencies:
   flutter_test:
@@ -26,6 +27,21 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/images/neutraljin.png
-    - assets/images/forestneutral.png
+    - assets/images/forest_begin.png
+    - assets/images/forest_2.png
+    - assets/images/forest_3.png
+    - assets/images/forest_4.png
+    - assets/images/forest_5.png
+    - assets/images/forest_6.png
+    - assets/images/forest_7.png
+    - assets/images/forest_8.png
+    - assets/images/forest_9.png
+    - assets/images/forest_10.png
+    - assets/images/forest_11.png
+    - assets/images/forest_12.png
+    - assets/images/forest_13.png
+    - assets/images/forest_14.png
+    - assets/images/forest_15.png
+    - assets/images/forest_16.png
+    - assets/images/forest_17.png
     - .env

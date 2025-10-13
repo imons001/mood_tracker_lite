@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'dart:ui';
 import '../services/openai_service.dart';
-import '../models/mood_log.dart'; // make sure this import exists!
+import '../models/mood_log.dart';
 
 class MoodEnvironment extends StatefulWidget {
   final String emoji;
   final String label;
-  final MoodLog? existingLog; // might be null and that’s OKAY
+  final MoodLog? existingLog;
 
   const MoodEnvironment({
     super.key,
@@ -26,24 +26,23 @@ class _MoodEnvironmentState extends State<MoodEnvironment> {
 
   String? aiResponse;
   bool isLoading = false;
+  bool isEditing = false;
 
   bool get isRevisit => widget.existingLog != null;
 
   @override
   void initState() {
     super.initState();
-    // if revisiting, preload the old journal text
     if (isRevisit) {
       _journalController.text = widget.existingLog!.entryText;
     }
   }
 
-  // Get AI feedback for the user's journal entry
   Future<void> _getAIReflection() async {
     setState(() => isLoading = true);
 
     final feedback = await openAI.getMoodFeedback(
-      mood: widget.label, // was selectedMood
+      mood: widget.label,
       journalText: _journalController.text,
     );
 
@@ -53,7 +52,6 @@ class _MoodEnvironmentState extends State<MoodEnvironment> {
     });
   }
 
-  // Color tint based on emoji
   Color getMoodColor() {
     switch (widget.emoji) {
       case '😄':
@@ -86,24 +84,38 @@ class _MoodEnvironmentState extends State<MoodEnvironment> {
           style: const TextStyle(color: Colors.white),
         ),
         centerTitle: true,
+        actions: [
+          if (isRevisit)
+            IconButton(
+              icon: Icon(isEditing ? Icons.check : Icons.edit,
+                  color: Colors.white),
+              tooltip: isEditing ? 'Save Changes' : 'Edit Entry',
+              onPressed: () {
+                if (isEditing) {
+                  final updatedLog = MoodLog(
+                    emoji: widget.emoji,
+                    label: widget.label,
+                    dateTime: widget.existingLog!.dateTime,
+                    entryText: _journalController.text,
+                  );
+                  Navigator.pop(context, updatedLog);
+                } else {
+                  setState(() => isEditing = true);
+                }
+              },
+            ),
+        ],
       ),
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // background
-          Image.asset('assets/images/forestneutral.png', fit: BoxFit.cover),
-
-          // mood overlay
+          Image.asset('assets/images/forest_begin.png', fit: BoxFit.cover),
           Container(color: moodColor),
-
-          // blur effect for soft moods
           if (widget.emoji == '🙂' || widget.emoji == '😭')
             BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
               child: Container(color: Colors.transparent),
             ),
-
-          // journal + reflection UI
           Padding(
             padding: const EdgeInsets.all(20),
             child: SingleChildScrollView(
@@ -121,12 +133,14 @@ class _MoodEnvironmentState extends State<MoodEnvironment> {
                   const SizedBox(height: 30),
                   TextField(
                     controller: _journalController,
-                    enabled: !isRevisit, // read-only if revisiting
+                    enabled: !isRevisit || isEditing,
                     style: const TextStyle(color: Colors.white),
                     maxLines: 5,
                     decoration: InputDecoration(
                       hintText: isRevisit
-                          ? 'Your previous reflection'
+                          ? (isEditing
+                              ? 'Edit your reflection...'
+                              : 'Your previous reflection')
                           : 'Write your thoughts here...',
                       hintStyle: const TextStyle(color: Colors.white70),
                       filled: true,
@@ -169,8 +183,7 @@ class _MoodEnvironmentState extends State<MoodEnvironment> {
                           dateTime: DateTime.now(),
                           entryText: _journalController.text,
                         );
-                        Navigator.pop(
-                            context, newLog); // Return MoodLog to MoodPage
+                        Navigator.pop(context, newLog);
                       },
                       icon: const Icon(Icons.save),
                       label: const Text('Save Mood Entry'),
