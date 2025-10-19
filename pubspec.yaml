@@ -16,7 +16,9 @@ dependencies:
   shared_preferences: ^2.3.1
   carousel_slider: ^5.1.1
   http: ^1.2.2
-  video_player: ^2.10.0
+  firebase_auth: ^5.7.0
+  firebase_core: ^3.1.1
+  flutter_rain_effect: ^1.0.1
 
 dev_dependencies:
   flutter_test:
@@ -27,6 +29,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    # 🌳 Base forest frames
     - assets/images/forest_begin.png
     - assets/images/forest_2.png
     - assets/images/forest_3.png
@@ -43,5 +46,42 @@ flutter:
     - assets/images/forest_14.png
     - assets/images/forest_15.png
     - assets/images/forest_16.png
-    - assets/images/forest_17.png
+
+    #Emotionforests
+    - assets/images/forest_anger.png
+    - assets/images/forest_anger2.png
+    - assets/images/forest_calm.png
+    - assets/images/forest_conflicted.png
+    - assets/images/forest_confused.png
+    - assets/images/forest_detached.png
+    - assets/images/forest_fear.png
+    - assets/images/forest_grateful.png
+    - assets/images/forest_happy.png
+    - assets/images/forest_loving.png
+    - assets/images/forest_melting.png
+    - assets/images/forest_sad.png
+    - assets/images/forest_sadness.png
+    - assets/images/forest_stressed.png
+    - assets/images/forest_tired.png
+    - assets/images/forest_vulnerable.png
+    - assets/images/forest_lonely.png
+    - assets/images/forest_worried.png
+    - assets/images/forest_overwhelmed.png
+    - assets/images/forest_shocked.png
+    - assets/images/forest_frustrated.png
+    - assets/images/forest_indecisive.png
+    - assets/images/forest_anxious.png
+    - assets/images/forest_disappointed.png
+    - assets/images/forest_bored.png
+    - assets/images/forest_excited.png
+    - assets/images/forest_regretful.png
+    - assets/images/forest_awkward.png
+    - assets/images/forest_curious.png
+    - assets/images/forest_guilt.png
+    - assets/images/forest_sick.png
+    - assets/images/forest_disgust.png
+    - assets/images/forest_embarrassed.png
+    - assets/images/forest_exhausted.png
+    - assets/images/forest_happy1.png
+    - assets/images/forest_sleepy.png
     - .env
