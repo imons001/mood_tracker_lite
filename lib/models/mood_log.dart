@@ -7,6 +7,8 @@ class MoodLog {
   final DateTime dateTime;
   final String entryText;
   final String? bgImage;
+  //maybe add bgImage for custom background per mood
+  //maybe add music or soundscape for each here ?......i dunno yet
 
 //constructor
   MoodLog({
