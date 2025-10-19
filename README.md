@@ -1,16 +1,7 @@
-# mood_tracker_lite
+# Mood Tracker Lite
+Indumathi Monson
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+“When you’re in the spirit world, your emotions become your reality.” — Iroh  
+This app reflects an emotional environment — a gentle space where your inner weather shapes the world around you.  
+When you feel sad, it rains. When you’re angry, storms rise. When you’re calm, the sun returns.
+Journal your feelings and visualize emotions.

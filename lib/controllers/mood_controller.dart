@@ -9,13 +9,13 @@ class MoodController {
     return DateFormat('EEEE, MMM d, yyyy').format(DateTime.now());
   }
 
-  // Save last selected mood emoji
+  // Save last selected mood emoji for display on home screen
   Future<void> saveMood(String mood) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('lastMood', mood);
   }
 
-  // Load last selected mood emoji to show
+  // Load last selected mood emoji to show off!
   Future<String?> loadLastMood() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('lastMood');

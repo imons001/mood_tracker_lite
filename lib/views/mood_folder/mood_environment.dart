@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'dart:ui';
-import '../services/openai_service.dart';
-import '../models/mood_log.dart'; // make sure this import exists!
+import '../../services/openai_service.dart';
+import '../../models/mood_log.dart';
 
+/// Base Environment — handles journaling + AI reflection
 class MoodEnvironment extends StatefulWidget {
   final String emoji;
   final String label;
-  final MoodLog? existingLog; // might be null and that’s OKAY
+  final MoodLog? existingLog;
 
   const MoodEnvironment({
     super.key,
@@ -16,34 +16,37 @@ class MoodEnvironment extends StatefulWidget {
     this.existingLog,
   });
 
+  // allows subclasses to override their visuals
+  Widget buildVisuals(BuildContext context) => const SizedBox.shrink();
+
   @override
   State<MoodEnvironment> createState() => _MoodEnvironmentState();
 }
 
 class _MoodEnvironmentState extends State<MoodEnvironment> {
   final TextEditingController _journalController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   final openAI = OpenAIService();
 
   String? aiResponse;
   bool isLoading = false;
+  bool isEditing = false;
 
   bool get isRevisit => widget.existingLog != null;
 
   @override
   void initState() {
     super.initState();
-    // if revisiting, preload the old journal text
     if (isRevisit) {
       _journalController.text = widget.existingLog!.entryText;
     }
   }
 
-  // Get AI feedback for the user's journal entry
   Future<void> _getAIReflection() async {
     setState(() => isLoading = true);
 
     final feedback = await openAI.getMoodFeedback(
-      mood: widget.label, // was selectedMood
+      mood: widget.label,
       journalText: _journalController.text,
     );
 
@@ -53,30 +56,9 @@ class _MoodEnvironmentState extends State<MoodEnvironment> {
     });
   }
 
-  // Color tint based on emoji
-  Color getMoodColor() {
-    switch (widget.emoji) {
-      case '😄':
-        return const Color.fromARGB(255, 7, 7, 7).withOpacity(0.4);
-      case '🙂':
-        return const Color.fromARGB(255, 238, 224, 161).withOpacity(0.4);
-      case '😐':
-        return Colors.grey.withOpacity(0.3);
-      case '😣':
-        return Colors.orangeAccent.withOpacity(0.4);
-      case '😭':
-        return Colors.indigo.withOpacity(0.4);
-      case '🤩':
-        return Colors.pinkAccent.withOpacity(0.4);
-      default:
-        return Colors.white.withOpacity(0.3);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final now = DateFormat('EEE, MMM d – h:mm a').format(DateTime.now());
-    final moodColor = getMoodColor();
 
     return Scaffold(
       appBar: AppBar(
@@ -86,24 +68,46 @@ class _MoodEnvironmentState extends State<MoodEnvironment> {
           style: const TextStyle(color: Colors.white),
         ),
         centerTitle: true,
+        actions: [
+          if (isRevisit)
+            IconButton(
+              icon: Icon(
+                isEditing ? Icons.check : Icons.edit,
+                color: const Color.fromARGB(255, 14, 51, 27),
+              ),
+              tooltip: isEditing ? 'Save Changes' : 'Edit Entry',
+              onPressed: () {
+                if (isEditing) {
+                  final updatedLog = MoodLog(
+                    emoji: widget.emoji,
+                    label: widget.label,
+                    dateTime: widget.existingLog!.dateTime,
+                    entryText: _journalController.text,
+                  );
+                  Navigator.pop(context, updatedLog);
+                } else {
+                  setState(() => isEditing = true);
+                }
+              },
+            ),
+        ],
       ),
+
+//for each emotion custom visuals can be built here
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // background
-          Image.asset('assets/images/forestneutral.png', fit: BoxFit.cover),
+          // Default forest background for all moods in case no custiom visuals
+          // are provided by subclasses
+          Image.asset(
+            'assets/images/forest_begin.png',
+            fit: BoxFit.cover,
+          ),
 
-          // mood overlay
-          Container(color: moodColor),
+          // allow custom visuals (Sadness overrides this)
+          widget.buildVisuals(context),
 
-          // blur effect for soft moods
-          if (widget.emoji == '🙂' || widget.emoji == '😭')
-            BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-              child: Container(color: Colors.transparent),
-            ),
-
-          // journal + reflection UI
+          // Foreground UI content
           Padding(
             padding: const EdgeInsets.all(20),
             child: SingleChildScrollView(
@@ -119,24 +123,44 @@ class _MoodEnvironmentState extends State<MoodEnvironment> {
                     ),
                   ),
                   const SizedBox(height: 30),
-                  TextField(
-                    controller: _journalController,
-                    enabled: !isRevisit, // read-only if revisiting
-                    style: const TextStyle(color: Colors.white),
-                    maxLines: 5,
-                    decoration: InputDecoration(
-                      hintText: isRevisit
-                          ? 'Your previous reflection'
-                          : 'Write your thoughts here...',
-                      hintStyle: const TextStyle(color: Colors.white70),
-                      filled: true,
-                      fillColor: Colors.black45,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  Container(
+                    height: 250,
+                    decoration: BoxDecoration(
+                      color: Colors.black45,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Scrollbar(
+                      thumbVisibility: true,
+                      child: SingleChildScrollView(
+                        controller: _scrollController,
+                        physics: const BouncingScrollPhysics(),
+                        padding: const EdgeInsets.all(8),
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(minHeight: 250),
+                          child: IntrinsicHeight(
+                            child: TextField(
+                              controller: _journalController,
+                              enabled: !isRevisit || isEditing,
+                              style: const TextStyle(color: Colors.white),
+                              maxLines: null,
+                              decoration: InputDecoration(
+                                hintText: isEditing
+                                    ? 'Edit your journal entry...'
+                                    : 'Write your thoughts here...',
+                                hintStyle: const TextStyle(
+                                  color: Colors.white70,
+                                ),
+                                border: InputBorder.none,
+                              ),
+                              showCursor: true,
+                              enableInteractiveSelection: true,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 30),
                   if (!isRevisit)
                     ElevatedButton.icon(
                       onPressed: _getAIReflection,
@@ -159,7 +183,7 @@ class _MoodEnvironmentState extends State<MoodEnvironment> {
                         textAlign: TextAlign.center,
                       ),
                     ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 30),
                   if (!isRevisit)
                     ElevatedButton.icon(
                       onPressed: () {
@@ -169,8 +193,7 @@ class _MoodEnvironmentState extends State<MoodEnvironment> {
                           dateTime: DateTime.now(),
                           entryText: _journalController.text,
                         );
-                        Navigator.pop(
-                            context, newLog); // Return MoodLog to MoodPage
+                        Navigator.pop(context, newLog);
                       },
                       icon: const Icon(Icons.save),
                       label: const Text('Save Mood Entry'),
