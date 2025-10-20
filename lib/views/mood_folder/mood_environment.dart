@@ -43,6 +43,8 @@ class _MoodEnvironmentState extends State<MoodEnvironment> {
   }
 
   Future<void> _getAIReflection() async {
+    if (_journalController.text.trim().isEmpty) return;
+
     setState(() => isLoading = true);
 
     final feedback = await openAI.getMoodFeedback(
@@ -51,8 +53,18 @@ class _MoodEnvironmentState extends State<MoodEnvironment> {
     );
 
     setState(() {
-      aiResponse = feedback;
       isLoading = false;
+
+      // Append reflection to journal text
+      final currentText = _journalController.text.trim();
+      final formattedFeedback = "\n\n---\nAI Reflection:\n$feedback";
+
+      _journalController.text = "$currentText$formattedFeedback";
+
+      // Move cursor to end
+      _journalController.selection = TextSelection.fromPosition(
+        TextPosition(offset: _journalController.text.length),
+      );
     });
   }
 
@@ -166,22 +178,6 @@ class _MoodEnvironmentState extends State<MoodEnvironment> {
                       onPressed: _getAIReflection,
                       icon: const Icon(Icons.spa),
                       label: const Text('Reflect with AI ✨'),
-                    ),
-                  const SizedBox(height: 20),
-                  if (isLoading)
-                    const CircularProgressIndicator(color: Colors.white)
-                  else if (aiResponse != null)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      child: Text(
-                        aiResponse!,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontStyle: FontStyle.italic,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
                     ),
                   const SizedBox(height: 30),
                   if (!isRevisit)
