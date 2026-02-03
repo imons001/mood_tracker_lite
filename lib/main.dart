@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'views/login_page.dart';
 import 'views/mood_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'routes/routes.dart';
 
 Future<void> main() async {
   //begin flutter
@@ -30,6 +31,8 @@ class MoodTrackerApp extends StatelessWidget {
     //title, theme and launches home:
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      //route add all pages
+      routes: Routes.routes,
       title: 'Mood Tracker Lite',
       theme: ThemeData(
         useMaterial3: true,

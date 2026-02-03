@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "name": "Flutter (lib\\helpers\\trigger_helper.dart)",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib\\helpers\\trigger_helper.dart"
+        }
+    ]
+}
