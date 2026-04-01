@@ -31,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  // ✅ Login function
+  // Login function
   Future<void> _login() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
@@ -59,11 +59,6 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login Page'),
-        backgroundColor: Colors.greenAccent,
-        centerTitle: true,
-      ),
       body: Stack(
         fit: StackFit.expand,
         children: [
@@ -71,6 +66,22 @@ class _LoginPageState extends State<LoginPage> {
             'assets/images/forest_begin.png',
             fit: BoxFit.cover,
           ),
+          // translucent gradient overlay for readability
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withOpacity(0.25), //lighter at top
+                    Colors.black.withOpacity(0.25), //mid gradient
+                    Colors.black.withOpacity(0.65), //darker at bottom
+                  ],
+                ),
+              ),
+            ),
+          ), // end overlay Positioned.fill
           Container(color: Colors.black.withOpacity(0.3)),
           Center(
             child: SingleChildScrollView(

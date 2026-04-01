@@ -4,7 +4,7 @@
 class MoodLog {
   final String emoji;
   final String label;
-  final DateTime dateTime;
+  final DateTime timestamp;
   final String entryText;
   final String? bgImage;
   //maybe add bgImage for custom background per mood
@@ -14,7 +14,7 @@ class MoodLog {
   MoodLog({
     required this.emoji,
     required this.label,
-    required this.dateTime,
+    required this.timestamp,
     this.entryText = '',
     this.bgImage,
   });
@@ -23,7 +23,7 @@ class MoodLog {
     return {
       'emoji': emoji,
       'label': label,
-      'dateTime': dateTime.toIso8601String(),
+      'timestamp': timestamp.toIso8601String(),
       'entryText': entryText,
       'bgImage': bgImage,
     };
@@ -33,7 +33,7 @@ class MoodLog {
     return MoodLog(
       emoji: map['emoji'],
       label: map['label'],
-      dateTime: DateTime.parse(map['dateTime']),
+      timestamp: DateTime.parse(map['timestamp']),
       entryText: map['entryText'] ?? '',
       bgImage: map['bgImage'],
     );

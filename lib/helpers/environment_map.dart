@@ -61,7 +61,10 @@ final Map<String, Widget Function(String, String, MoodLog?)> environmentMap = {
   'detached': (emoji, label, existing) =>
       DetachedEnvironment(emoji: emoji, label: label, existingLog: existing),
   'disappointed': (emoji, label, existing) => DisappointedEnvironment(
-      emoji: emoji, label: label, existingLog: existing),
+        emoji: emoji,
+        label: label,
+        existingLog: existing,
+      ),
   'disgusted': (emoji, label, existing) =>
       DisgustedEnvironment(emoji: emoji, label: label, existingLog: existing),
   'embarrassed': (emoji, label, existing) =>
@@ -114,5 +117,9 @@ final Map<String, Widget Function(String, String, MoodLog?)> environmentMap = {
 Widget getEnvironmentWidget(String label, String emoji, [MoodLog? existing]) {
   final builder = environmentMap[label.toLowerCase()];
   return builder?.call(emoji, label, existing) ??
-      MoodEnvironment(emoji: emoji, label: label, existingLog: existing);
+      MoodEnvironment(
+        emoji: emoji,
+        label: label,
+        existingLog: existing,
+      );
 }
