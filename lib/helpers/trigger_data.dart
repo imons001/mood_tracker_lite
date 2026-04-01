@@ -1,105 +1,126 @@
 import 'package:flutter/material.dart';
 
-// Combined trigger helper:
-// - single source of truth
-// - emoji + label + color
-// - map for fast lookup
-// - list for ordered UI grids
+// List of triggers with their emojis, labels, and colors
 
 final List<Map<String, dynamic>> triggers = [
   {
     'emoji': '💻',
-    'label': 'Apps / Social Media',
-    'color': Colors.lightBlueAccent
+    'label': 'Social Media',
+    'color': Colors.lightBlueAccent,
   },
-  {'emoji': '🍺', 'label': 'Alcohol', 'color': Colors.deepPurpleAccent},
+  {
+    'emoji': '🍺',
+    'label': 'Alcohol',
+    'color': Colors.deepPurpleAccent,
+  },
   {
     'emoji': '🚬',
-    'label': 'Cigarettes / Smoking',
-    'color': Color.fromARGB(255, 194, 87, 48)
+    'label': 'Smoking',
+    'color': const Color.fromARGB(255, 194, 87, 48),
   },
   {
     'emoji': '☕',
-    'label': 'Coffee / Caffeine',
-    'color': Color.fromARGB(255, 109, 73, 60)
+    'label': 'Caffeine',
+    'color': const Color.fromARGB(255, 53, 34, 27),
   },
   {
     'emoji': '🍫',
-    'label': 'Chocolate / Sugar',
-    'color': Color.fromARGB(255, 83, 48, 36)
+    'label': 'Sugar',
+    'color': const Color.fromARGB(255, 83, 48, 36),
   },
   {
     'emoji': '🍔',
-    'label': 'Fast Food / Junk Food',
-    'color': Colors.deepOrangeAccent
+    'label': 'Junk Food',
+    'color': Colors.deepOrangeAccent,
   },
-  {'emoji': '💰', 'label': 'Finances / Money Stress', 'color': Colors.green},
-  {'emoji': '🎮', 'label': 'Gaming', 'color': Colors.cyanAccent},
+  {
+    'emoji': '💰',
+    'label': 'Finances',
+    'color': Colors.green,
+  },
+  {
+    'emoji': '🎮',
+    'label': 'Gaming',
+    'color': Colors.cyanAccent,
+  },
   {
     'emoji': '💬',
-    'label': 'Gossip / Overthinking / Arguments',
-    'color': Colors.blueAccent
+    'label': 'Gossip / Overthinking',
+    'color': Colors.blueAccent,
   },
-  {'emoji': '🏠', 'label': 'Home Stress', 'color': Colors.grey},
+  {
+    'emoji': '🏠',
+    'label': 'Home Stress',
+    'color': Colors.grey,
+  },
   {
     'emoji': '💤',
-    'label': 'Insomnia / Fatigue',
-    'color': Colors.lightBlueAccent
+    'label': 'Insomnia',
+    'color': Colors.lightBlueAccent,
   },
-  {'emoji': '💼', 'label': 'Job / Work', 'color': Colors.blueGrey},
+  {
+    'emoji': '💼',
+    'label': 'Work',
+    'color': Colors.blueGrey,
+  },
   {
     'emoji': '💔',
-    'label': 'Loneliness / Heartbreak',
-    'color': Colors.redAccent
+    'label': 'Heartbreak',
+    'color': Colors.redAccent,
   },
   {
     'emoji': '🍕',
     'label': 'Late Night Snacks',
-    'color': Colors.deepOrangeAccent
+    'color': Colors.deepOrangeAccent,
   },
   {
     'emoji': '📱',
-    'label': 'Phone Addiction / Doomscrolling',
-    'color': Colors.lightBlueAccent
+    'label': 'Doomscrolling',
+    'color': Colors.lightBlueAccent,
   },
-  {'emoji': '💊', 'label': 'Drugs / Medication', 'color': Colors.purpleAccent},
+  {
+    'emoji': '💊',
+    'label': 'Drugs / Medication',
+    'color': Colors.purpleAccent,
+  },
   {
     'emoji': '😱',
-    'label': 'Scary / Anxiety Triggers',
-    'color': Colors.redAccent
+    'label': 'Anxiety Triggers',
+    'color': Colors.redAccent,
   },
   {
-    'emoji': '🎬',
-    'label': 'TV / Binge Watching',
-    'color': Colors.deepPurpleAccent
+    'emoji': '📺',
+    'label': 'TV',
+    'color': Colors.deepPurpleAccent,
   },
-  {'emoji': '🌧️', 'label': 'Weather / Gloomy Days', 'color': Colors.blueGrey},
-  {'emoji': '🚗', 'label': 'Traffic / Commuting', 'color': Colors.grey},
-  {'emoji': '💸', 'label': 'Spending / Shopping', 'color': Colors.lightGreen},
-  {'emoji': '📚', 'label': 'Studying / Overwork', 'color': Colors.indigoAccent},
-  {'emoji': '👥', 'label': 'Social Pressure', 'color': Colors.teal},
+  {
+    'emoji': '🌧️',
+    'label': 'Weather',
+    'color': Colors.blueGrey,
+  },
+  {
+    'emoji': '🚗',
+    'label': 'Traffic',
+    'color': Colors.grey,
+  },
+  {
+    'emoji': '💸',
+    'label': 'Spending',
+    'color': Colors.lightGreen,
+  },
+  {
+    'emoji': '📚',
+    'label': 'Studying',
+    'color': Colors.indigoAccent,
+  },
+  {
+    'emoji': '👥',
+    'label': 'Social Pressure',
+    'color': Colors.teal,
+  },
   {
     'emoji': '🕒',
-    'label': 'Time Pressure / Deadlines',
-    'color': Colors.purpleAccent
-  },
-  {'emoji': '🍷', 'label': 'Wine / Drinking', 'color': Colors.purpleAccent},
-  {'emoji': '💡', 'label': 'Overthinking / Ideas', 'color': Colors.amber},
-  {'emoji': '🎧', 'label': 'Loud Music / Noise', 'color': Colors.blueAccent},
-  {
-    'emoji': '💉',
-    'label': 'Medical / Doctor Anxiety',
-    'color': Colors.deepPurpleAccent
-  },
-  {'emoji': '🔥', 'label': 'Anger / Conflict', 'color': Colors.red},
-  {
-    'emoji': '🛒',
-    'label': 'Shopping / Overspending',
-    'color': Colors.amberAccent
+    'label': 'Deadlines',
+    'color': const Color.fromARGB(255, 240, 117, 3),
   },
 ];
-
-// O(1) lookup map for colors / labels / halos
-final Map<String, Map<String, dynamic>> triggerByEmoji = {
-  for (final trigger in triggers) trigger['emoji']: trigger,
-};

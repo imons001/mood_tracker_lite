@@ -47,43 +47,12 @@ class _SignUpPageState extends State<SignUpPage> {
     }
   } //closes try
 
-  /*
-    try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-
-      // Go to MoodPage after successful signup
-      if (!mounted) return; //idk why this is needed here but ok
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const MoodPage()),
-      );
-    } on FirebaseAuthException catch (e) {
-      String message;
-      if (e.code == 'weak-password') {
-        message = 'The password is too weak.';
-      } else if (e.code == 'email-already-in-use') {
-        message = 'This email is already in use.';
-      } else if (e.code == 'invalid-email') {
-        message = 'The email address is not valid.';
-      } else {
-        message = 'Sign-up failed: ${e.message}';
-      }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
-    }
-  }
-*/
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // opens Scaffold
       appBar: AppBar(
-        title: const Text('Sign Up'),
+        backgroundColor: Colors.greenAccent,
       ), // closes AppBar
 
       body: Stack(
@@ -162,17 +131,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                   ),
                   child: const Text('Sign Up'),
-                ), // ✅ closes ElevatedButton
-
-                const SizedBox(height: 15),
-
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text(
-                    'Back to Login',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ), // ✅ closes TextButton
+                ), // closes ElevatedButton
               ], // closes children
             ), // closes Column
           ), // closes Padding

@@ -28,7 +28,6 @@ class _MoodEnvironmentState extends State<MoodEnvironment> {
   final ScrollController _scrollController = ScrollController();
   final openAI = OpenAIService();
 
-  String? aiResponse;
   bool isLoading = false;
   bool isEditing = false;
 
@@ -40,6 +39,13 @@ class _MoodEnvironmentState extends State<MoodEnvironment> {
     if (isRevisit) {
       _journalController.text = widget.existingLog!.entryText;
     }
+  }
+
+  @override
+  void dispose() {
+    _journalController.dispose();
+    _scrollController.dispose();
+    super.dispose();
   }
 
   Future<void> _getAIReflection() async {
@@ -55,17 +61,39 @@ class _MoodEnvironmentState extends State<MoodEnvironment> {
     setState(() {
       isLoading = false;
 
-      // Append reflection to journal text
       final currentText = _journalController.text.trim();
       final formattedFeedback = "\n\n---\nAI Reflection:\n$feedback";
 
       _journalController.text = "$currentText$formattedFeedback";
 
-      // Move cursor to end
       _journalController.selection = TextSelection.fromPosition(
         TextPosition(offset: _journalController.text.length),
       );
     });
+  }
+
+  void _toggleEditOrSave() {
+    if (isEditing) {
+      final updatedLog = MoodLog(
+        emoji: widget.emoji,
+        label: widget.label,
+        timestamp: widget.existingLog!.timestamp,
+        entryText: _journalController.text,
+      );
+      Navigator.pop(context, updatedLog);
+    } else {
+      setState(() => isEditing = true);
+    }
+  }
+
+  void _saveNewEntry() {
+    final newLog = MoodLog(
+      emoji: widget.emoji,
+      label: widget.label,
+      timestamp: DateTime.now(),
+      entryText: _journalController.text,
+    );
+    Navigator.pop(context, newLog);
   }
 
   @override
@@ -73,127 +101,103 @@ class _MoodEnvironmentState extends State<MoodEnvironment> {
     final now = DateFormat('EEE, MMM d – h:mm a').format(DateTime.now());
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.green.shade200,
-        title: Text(
-          '${widget.label} Mood',
-          style: const TextStyle(color: Colors.white),
-        ),
         centerTitle: true,
+        title: Text(
+          '${widget.label} ${widget.emoji}',
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        backgroundColor: Colors.black.withOpacity(0.35),
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
         actions: [
           if (isRevisit)
             IconButton(
-              icon: Icon(
-                isEditing ? Icons.check : Icons.edit,
-                color: const Color.fromARGB(255, 14, 51, 27),
-              ),
+              icon: Icon(isEditing ? Icons.check : Icons.edit),
               tooltip: isEditing ? 'Save Changes' : 'Edit Entry',
-              onPressed: () {
-                if (isEditing) {
-                  final updatedLog = MoodLog(
-                    emoji: widget.emoji,
-                    label: widget.label,
-                    dateTime: widget.existingLog!.dateTime,
-                    entryText: _journalController.text,
-                  );
-                  Navigator.pop(context, updatedLog);
-                } else {
-                  setState(() => isEditing = true);
-                }
-              },
+              onPressed: _toggleEditOrSave,
             ),
         ],
       ),
-
-//for each emotion custom visuals can be built here
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // Default forest background for all moods in case no custiom visuals
-          // are provided by subclasses
           Image.asset(
             'assets/images/forest_begin.png',
             fit: BoxFit.cover,
           ),
-
-          // allow custom visuals (Sadness overrides this)
           widget.buildVisuals(context),
-
-          // Foreground UI content
           Padding(
             padding: const EdgeInsets.all(20),
             child: SingleChildScrollView(
               child: Column(
                 children: [
+                  const SizedBox(height: 90),
                   Text(
-                    'You are feeling ${widget.label} ${widget.emoji}\n$now',
+                    now,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                      fontSize: 22,
+                      fontSize: 18,
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 24),
                   Container(
                     height: 250,
                     decoration: BoxDecoration(
                       color: Colors.black45,
                       borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: Colors.white24,
+                        width: 1.2,
+                      ),
                     ),
                     child: Scrollbar(
+                      controller: _scrollController,
                       thumbVisibility: true,
                       child: SingleChildScrollView(
                         controller: _scrollController,
-                        physics: const BouncingScrollPhysics(),
-                        padding: const EdgeInsets.all(8),
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(minHeight: 250),
-                          child: IntrinsicHeight(
-                            child: TextField(
-                              controller: _journalController,
-                              enabled: !isRevisit || isEditing,
-                              style: const TextStyle(color: Colors.white),
-                              maxLines: null,
-                              decoration: InputDecoration(
-                                hintText: isEditing
+                        padding: const EdgeInsets.all(10),
+                        child: TextField(
+                          controller: _journalController,
+                          enabled: !isRevisit || isEditing,
+                          style: const TextStyle(color: Colors.white),
+                          maxLines: null,
+                          decoration: InputDecoration(
+                            hintText: isRevisit
+                                ? (isEditing
                                     ? 'Edit your journal entry...'
-                                    : 'Write your thoughts here...',
-                                hintStyle: const TextStyle(
-                                  color: Colors.white70,
-                                ),
-                                border: InputBorder.none,
-                              ),
-                              showCursor: true,
-                              enableInteractiveSelection: true,
-                            ),
+                                    : 'Tap edit to make changes...')
+                                : 'Write your thoughts here...',
+                            hintStyle: const TextStyle(color: Colors.white70),
+                            border: InputBorder.none,
                           ),
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 24),
                   if (!isRevisit)
                     ElevatedButton.icon(
-                      onPressed: _getAIReflection,
+                      onPressed: isLoading ? null : _getAIReflection,
                       icon: const Icon(Icons.spa),
-                      label: const Text('Reflect with AI ✨'),
+                      label:
+                          Text(isLoading ? 'Reflecting...' : 'Reflect with AI'),
                     ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 16),
                   if (!isRevisit)
                     ElevatedButton.icon(
-                      onPressed: () {
-                        final newLog = MoodLog(
-                          emoji: widget.emoji,
-                          label: widget.label,
-                          dateTime: DateTime.now(),
-                          entryText: _journalController.text,
-                        );
-                        Navigator.pop(context, newLog);
-                      },
+                      onPressed: _saveNewEntry,
                       icon: const Icon(Icons.save),
                       label: const Text('Save Mood Entry'),
                     ),
+                  const SizedBox(height: 30),
                 ],
               ),
             ),

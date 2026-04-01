@@ -14,7 +14,7 @@ class SleepLog {
     required this.timestamp,
     this.note,
   });
-//place toMap
+//place toMap for saving to shared preferences as JSON string
   Map<String, dynamic> toMap() {
     return {
       'emoji': emoji,
@@ -24,7 +24,7 @@ class SleepLog {
     };
   }
 
-//load from map
+//load from map from stored
   factory SleepLog.fromMap(Map<String, dynamic> map) {
     return SleepLog(
       emoji: map['emoji'] as String,

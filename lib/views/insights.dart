@@ -155,7 +155,7 @@ class _InsightsState extends State<Insights> {
                                     return PieChartSectionData(
                                       color: data['color'],
                                       value: data['percentage'],
-                                      title:
+                                      title: //fix this later with a line
                                           '${data['label']} \n${data['percentage'].toStringAsFixed(1)}%',
                                       radius: 60, // size of each section
                                       titleStyle: const TextStyle(

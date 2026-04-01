@@ -76,26 +76,7 @@ class _MoodPageState extends State<MoodPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar:
-          true, // allows background image to go under appbar
-      appBar: AppBar(
-        backgroundColor: Colors.transparent, // transparent app bar
-        elevation: 0, // no shadow
-        title: null, // title removed so it won't stay floating
-        centerTitle: true, // centers the title
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: IconButton(
-              icon: const Icon(Icons.logout, color: Colors.white),
-              onPressed: () async {
-                await FirebaseAuth.instance.signOut(); // sign out user
-              },
-            ),
-          ),
-        ], // end of actions list
-      ), // end of AppBar
-
+      //removed app bar meh
       // main body layout
       body: Stack(
         children: [
@@ -115,9 +96,9 @@ class _MoodPageState extends State<MoodPage> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.black.withOpacity(0.25),
-                    Colors.black.withOpacity(0.45),
-                    Colors.black.withOpacity(0.65),
+                    Colors.black.withOpacity(0.25), //lighter at top
+                    Colors.black.withOpacity(0.25), //mid gradient
+                    Colors.black.withOpacity(0.45), //darker at bottom
                   ],
                 ),
               ),
@@ -126,10 +107,12 @@ class _MoodPageState extends State<MoodPage> {
 
           // main scrollable content area and footer
           ListView(
-            padding: const EdgeInsets.only(top: 100, bottom: 80),
+            padding: const EdgeInsets.only(
+                top: 100, bottom: 80), // spacing for app bar and footer
             children: [
               const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24.0),
+                padding:
+                    EdgeInsets.symmetric(horizontal: 24.0), // title padding
                 child: Center(
                   child: Text(
                     "Log a Mood",
@@ -141,13 +124,15 @@ class _MoodPageState extends State<MoodPage> {
                   ), // text widget
                 ), // center
               ),
+              const SizedBox(height: 35), // spacing below title
 
               // carousel shows past moods if any exist
               if (moodHistory.isNotEmpty)
                 SizedBox(
-                  height: 180,
+                  height: 150, // fixed height for carousel
                   child: PageView.builder(
-                    controller: PageController(viewportFraction: 0.8),
+                    controller: PageController(
+                        viewportFraction: 0.8), // partial preview of next card
                     itemCount: moodHistory.length,
                     itemBuilder: (context, index) {
                       final mood = moodHistory.reversed
@@ -213,11 +198,11 @@ class _MoodPageState extends State<MoodPage> {
                   ), // end PageView.builder
                 ), // end SizedBox
 
-              const SizedBox(height: 30), // spacing between carousel and grid
+              const SizedBox(height: 20), // spacing between carousel and grid
 
               // grid of selectable moods
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 70.0),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: GridView.builder(
                   shrinkWrap: true, // lets grid fit inside scroll view
                   physics:
@@ -287,7 +272,7 @@ class _MoodPageState extends State<MoodPage> {
 //Title Mood Insights
 //moved weekly logs to insights page
 //trigger trackers section header
-              const SizedBox(height: 40),
+              const SizedBox(height: 20), //above title spacing
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24.0),
                 child: Center(
@@ -303,7 +288,9 @@ class _MoodPageState extends State<MoodPage> {
               ),
 //grid for trigger trackers
 // grid for trigger trackers
-              const SizedBox(height: 20),
+              const SizedBox(
+                  height: 25), //fix too far down between title and grid
+              //jesus christ idk its still looks weird think about later
 // Add Trigger Tracker grid or content here
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -362,9 +349,9 @@ class _MoodPageState extends State<MoodPage> {
                 ), // end GridView.builder
               ), // padding
 //sleep trackers section header
-              const SizedBox(height: 40),
+              const SizedBox(height: 20),
               const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                padding: EdgeInsets.symmetric(horizontal: 24.0),
                 child: Center(
                   child: Text(
                     "Sleep",
