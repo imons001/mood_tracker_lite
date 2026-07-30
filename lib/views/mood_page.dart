@@ -32,7 +32,8 @@ class MoodPage extends StatefulWidget {
 
 // state class manages data and UI updates
 class _MoodPageState extends State<MoodPage> {
-  final MoodController _controller = MoodController(); // controller instance
+  final MoodController _controller =
+      MoodController(); // mood flutter pub getcontroller instance
   List<MoodLog> moodHistory = []; // list to store past moods
 
   //now triggers
@@ -354,15 +355,82 @@ class _MoodPageState extends State<MoodPage> {
                 padding: EdgeInsets.symmetric(horizontal: 24.0),
                 child: Center(
                   child: Text(
-                    "Sleep",
+                    "Sleep", //change eventually to sleep trackers or something
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 22, //uh idk if i like size
+                      fontWeight: FontWeight.bold, //change this too boo thang
                     ), // text style
                   ), // text widget
                 ), // center
               ),
+//mini carousel pulling from sleep logs
+              if (sleepHistory.isNotEmpty)
+                SizedBox(
+                  height: 150, // fixed height for carousel
+                  child: PageView.builder(
+                    controller: PageController(
+                        viewportFraction: 0.8), // partial preview of next card
+                    itemCount: sleepHistory.length,
+                    itemBuilder: (context, index) {
+                      final sleep = sleepHistory.reversed
+                          .toList()[index]; //most recent first
+                      final color = _sleepController.getSleepColor(sleep.emoji);
+                      // final monthly = _controller.getMonthlyLogs(mood.label); // for monthly chart
+                      // each card opens its environment on tap
+                      return GestureDetector(
+                        onTap: () async {
+                          await showSleepSheet(
+                            context: context,
+                            controller: _sleepController,
+                            preselectedEmoji: sleep.emoji,
+                            onSaved: _loadSleep,
+                          );
+
+                          await _loadSleep(); // refresh after sheet closes
+                        }, // end onTap
+
+                        // sleep card design carousel
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: color.withOpacity(0.35),
+                            borderRadius: BorderRadius.circular(24),
+                            border: Border.all(color: Colors.white30),
+                            boxShadow: [
+                              BoxShadow(
+                                color: color.withOpacity(0.4),
+                                blurRadius: 15,
+                                offset: const Offset(0, 6),
+                              ),
+                            ],
+                          ),
+                          // card content
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                sleep.emoji,
+                                style: const TextStyle(fontSize: 44),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                sleep.label,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ), // end Column
+                        ),
+                      ); // end GestureDetector
+                    },
+                  ), // end PageView.builder
+                ), // end SizedBox
+
 //grid for sleep trackers
               const SizedBox(height: 20),
 // Add Sleep Tracker grid or content here
@@ -440,6 +508,7 @@ class _MoodPageState extends State<MoodPage> {
             case 2:
               break;
             case 3:
+              Navigator.pushNamed(context, Routes.profilePage);
               break;
           }
         },
